@@ -2,16 +2,24 @@
 import argparse
 import sys
 
+from kicad2charmhigh import get_args_parser
+from kicad2charmhigh import main as k2c_main
 
 def main():
     """Console script for kitoolkit."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument('_', nargs='*')
-    args = parser.parse_args()
+    parser = get_args_parser()
 
-    print("Arguments: " + str(args._))
-    print("Replace this message by putting your code into "
-          "kitoolkit.cli.main")
+    parser.add_argument('bom', type=str, help='Kicad BOM File')
+    parser.add_argument('--kicad-pcb', type=str, help='Kicad PCB File to generate InteractiveBom')
+    
+    args = parser.parse_args()
+    print("\n".join([f"{k} = {getattr(args, k)}" for k in vars(args)]))
+
+    kwargs = vars(args)
+
+    k2c_args = {k:kwargs[k] for k in kwargs if k not in ['bom', 'kicad_pcb']}
+    k2c_main(**k2c_args)
+
     return 0
 
 
