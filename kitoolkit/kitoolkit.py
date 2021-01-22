@@ -46,7 +46,11 @@ def extract_feeders_data(feeders_file):
     ]
     """
     feeeders_data = []
-    for row in pyexcel.get_array(file_name=feeders_file, start_row=1): # skip header
+    first_row = True
+    for row in pyexcel.get_array(file_name=feeders_file):
+        if first_row: 
+            first_row = False
+            continue
         cmp = row[2]
         alias = row[15]
         index = row[1]
@@ -69,7 +73,13 @@ def extract_tape_data(feeders_file):
     ]
     """
     feeeders_data = []
-    for row in pyexcel.get_array(file_name=feeders_file, start_row=1): # skip header
+    
+    first_row = True
+    for row in pyexcel.get_array(file_name=feeders_file): # skip header
+        if first_row: 
+            first_row = False
+            continue
+
         cmp = row[2]
         alias = row[16]
         index = row[1]
@@ -147,12 +157,14 @@ def tag_bom(bom_sheet, machine_conf):
 
         else:
             l = [(ct, find_comp(cmp, machine_conf['cuttapes'][ct])) for ct in machine_conf['cuttapes']]
+            l = filter(lambda  t: t[1] is not None, l)
+            l = list(l)
             if len(l) > 1:
                 raise Exception(f"More than one CutTape found for {cmp}")
 
-            ct, fid = l[0]
+            elif len(l) == 1:
+                ct, fid = l[0]
 
-            if fid != None:
                 row[assembly_mode_index] = 'Cut Tape'
                 row[cuttape_job_name] = ct
                 row[feeder_index_index] = fid
