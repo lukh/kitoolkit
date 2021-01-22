@@ -2,6 +2,7 @@
 import argparse
 import sys
 import os
+import subprocess
 
 from kicad2charmhigh import get_args_parser
 from kicad2charmhigh import main as k2c_main
@@ -34,8 +35,11 @@ def main():
     # get the machine config
     machine_conf = kitoolkit.extract_machine_config(args.feeder_config_file, args.cuttape_config_files)
 
-    bom_annoted = kitoolkit.tag_bom(bom, machine_conf)
+    bom_annoted, auto_mounted_cmps = kitoolkit.tag_bom(bom, machine_conf)
     bom_annoted.save_as(os.path.join(basepath, output_bom_basename + ".xls"))
+
+    # Run Interactive Bom TODO: Improve call to the tool...
+    subprocess.run(["interactive_html_bom", args.kicad_pcb, '--highlight-pin1', '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps])
 
     return 0
 

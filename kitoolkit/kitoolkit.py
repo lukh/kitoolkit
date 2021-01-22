@@ -114,6 +114,8 @@ def tag_bom(bom_sheet, machine_conf):
     QUANTITY=3
     DESIGNATION=4
 
+    auto_mounted_cmps = ""
+
 
     append_col = bom_sheet.number_of_columns()
 
@@ -169,4 +171,7 @@ def tag_bom(bom_sheet, machine_conf):
                 row[cuttape_job_name] = ct
                 row[feeder_index_index] = fid
 
-    return bom_sheet
+        if row[assembly_mode_index] != 'Manual':
+            auto_mounted_cmps += row[DES] + ','
+
+    return bom_sheet, auto_mounted_cmps
