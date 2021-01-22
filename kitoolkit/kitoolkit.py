@@ -1,8 +1,38 @@
 """Main module."""
+import sys
 import os
 import pyexcel
+import logging
+import datetime
 
 
+def check_dir_and_files(component_position_file, bom_file, output_folder, basename):
+    # basic file verification
+    if not os.path.isfile(component_position_file):
+        logging.error("{} is not an existing file".format(component_position_file))
+        sys.exit(-1)
+
+    if not os.path.isfile(bom_file):
+        logging.error("{} is not an existing file".format(component_position_file))
+        sys.exit(-1)
+
+
+    if output_folder is None:
+        basepath = os.path.dirname(os.path.abspath(component_position_file))
+    else:
+        basepath = output_folder
+
+
+    if os.path.isdir(basepath):
+        logging.warning("{} is an existing dir, cancelling,".format(basepath))
+        sys.exit(0)
+
+    os.makedirs(os.path.join(basepath))
+
+    if basename is None:
+        basename = "{date}-{basename}".format(date=datetime.datetime.now().strftime("%Y%m%d-%H%M%S"), basename=os.path.splitext(os.path.basename(bom_file))[0])
+
+    return basepath, basename
 
 def extract_bom(bom_file):
     return pyexcel.get_sheet(file_name=bom_file, start_row=0, delimiter=";")
@@ -76,7 +106,6 @@ def tag_bom(bom_sheet, machine_conf):
 
 
     append_col = bom_sheet.number_of_columns()
-    print(append_col)
 
     assembly_mode_index = append_col
     bom_sheet.column += ["Assembly Mode"]
@@ -101,8 +130,12 @@ def tag_bom(bom_sheet, machine_conf):
         return None
 
 
-
+    first_row = True
     for row in bom_sheet:
+        if first_row:
+            first_row = False
+            continue
+
         cmp = row[DESIGNATION] + "-" + row[PACKAGE]
 
         row[assembly_mode_index] = 'Manual'
@@ -124,4 +157,4 @@ def tag_bom(bom_sheet, machine_conf):
                 row[cuttape_job_name] = ct
                 row[feeder_index_index] = fid
 
-    print(bom_sheet)
+    return bom_sheet
