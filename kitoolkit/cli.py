@@ -36,11 +36,11 @@ def main():
     # get the machine config
     machine_conf = kitoolkit.extract_machine_config(args.feeder_config_file, args.cuttape_config_files)
 
-    bom_annoted, auto_mounted_cmps = kitoolkit.tag_bom(bom, machine_conf)
+    bom_annoted, auto_mounted_cmps, nm_cmps = kitoolkit.tag_bom(bom, machine_conf)
     bom_annoted.save_as(os.path.join(basepath, output_bom_basename + ".xls"))
 
     # Run Interactive Bom TODO: Improve call to the tool...
-    subprocess.run(["interactive_html_bom", args.kicad_pcb, '--highlight-pin1', '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps])
+    subprocess.run(["interactive_html_bom", args.kicad_pcb, '--highlight-pin1', '--no-browser', '--name-format', output_bom_basename, '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps + nm_cmps +"FID*"])
 
     return 0
 
