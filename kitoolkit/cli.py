@@ -15,16 +15,17 @@ def main():
 
     parser.add_argument('bom', type=str, help='Kicad BOM File')
     parser.add_argument('--kicad-pcb', type=str, help='Kicad PCB File to generate InteractiveBom')
+    parser.add_argument('--dir-exist-ok', action="store_true", help="Do not fail if the directory exists")
     
     args = parser.parse_args()
 
     kwargs = vars(args)
 
-    basepath, output_bom_basename = kitoolkit.check_dir_and_files(kwargs['component_position_file'], kwargs['bom'], kwargs['output_folder'], kwargs['basename'])
+    basepath, output_bom_basename = kitoolkit.check_dir_and_files(kwargs['component_position_file'], kwargs['bom'], kwargs['output_folder'], kwargs['basename'], kwargs['dir_exist_ok'])
 
 
     # Build .dpv (CharmHigh)
-    k2c_args = {k:kwargs[k] for k in kwargs if k not in ['bom', 'kicad_pcb']}
+    k2c_args = {k:kwargs[k] for k in kwargs if k not in ['bom', 'kicad_pcb', 'dir_exist_ok']}
     k2c_main(**k2c_args)
 
 

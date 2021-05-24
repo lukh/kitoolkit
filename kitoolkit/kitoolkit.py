@@ -6,7 +6,7 @@ import logging
 import datetime
 
 
-def check_dir_and_files(component_position_file, bom_file, output_folder, basename):
+def check_dir_and_files(component_position_file, bom_file, output_folder, basename, dir_exist_ok):
     # basic file verification
     if not os.path.isfile(component_position_file):
         logging.error("{} is not an existing file".format(component_position_file))
@@ -22,12 +22,11 @@ def check_dir_and_files(component_position_file, bom_file, output_folder, basena
     else:
         basepath = output_folder
 
-
-    if os.path.isdir(basepath):
+    if os.path.isdir(basepath) and not dir_exist_ok:
         logging.warning("{} is an existing dir, cancelling,".format(basepath))
         sys.exit(0)
 
-    os.makedirs(os.path.join(basepath))
+    os.makedirs(os.path.join(basepath), exist_ok=dir_exist_ok)
 
     if basename is None:
         basename = "{date}-{basename}".format(date=datetime.datetime.now().strftime("%Y%m%d-%H%M%S"), basename=os.path.splitext(os.path.basename(bom_file))[0])
