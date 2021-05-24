@@ -98,10 +98,12 @@ def extract_machine_config(feeders_file, cuttape_config_files):
     machine_config = {}
 
     machine_config['feeders'] = extract_feeders_data(feeders_file)
+
     machine_config['cuttapes'] = {}
-    for cuttape_file in cuttape_config_files:
-        cuttape = os.path.splitext(os.path.basename(cuttape_file))[0]
-        machine_config['cuttapes'][cuttape] = extract_tape_data(cuttape_file)
+    if cuttape_config_files is not None:
+        for cuttape_file in cuttape_config_files:
+            cuttape = os.path.splitext(os.path.basename(cuttape_file))[0]
+            machine_config['cuttapes'][cuttape] = extract_tape_data(cuttape_file)
 
     return machine_config
 
