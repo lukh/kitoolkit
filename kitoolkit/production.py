@@ -34,7 +34,8 @@ def check_dir_and_files(component_position_file, bom_file, output_folder, basena
     return basepath, basename
 
 def extract_bom(bom_file):
-    return pyexcel.get_sheet(file_name=bom_file, start_row=0, delimiter=";")
+    bom_content = pyexcel.get_sheet(file_name=bom_file, start_row=0, delimiter=",")
+    return bom_content
 
 
 def extract_feeders_data(feeders_file):
@@ -110,9 +111,9 @@ def extract_machine_config(feeders_file, cuttape_config_files):
 
 def tag_bom(bom_sheet, machine_conf):
     ID=0
-    DES=1
-    PACKAGE=2
-    QUANTITY=3
+    DES=3
+    PACKAGE=5
+    QUANTITY=6
     DESIGNATION=4
 
     auto_mounted_cmps = ""
@@ -149,6 +150,9 @@ def tag_bom(bom_sheet, machine_conf):
         if first_row:
             first_row = False
             continue
+    
+        if not isinstance(row[ID], int):
+            break
 
         cmp = row[DESIGNATION] + "-" + row[PACKAGE]
 
@@ -177,6 +181,7 @@ def tag_bom(bom_sheet, machine_conf):
             auto_mounted_cmps += row[DES] + ','
 
         if row[DESIGNATION].find("/NM") != -1:
+            row[assembly_mode_index] = 'NotMounted'
             nm_cmp += row[DES] + ','
 
 
