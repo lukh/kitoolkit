@@ -29,6 +29,11 @@ def run_production(args):
     bom_annoted, auto_mounted_cmps, nm_cmps = production.tag_bom(bom, machine_conf)
     bom_annoted.save_as(os.path.join(basepath, output_bom_basename + ".xls"))
 
+    with open(os.path.join(basepath, output_bom_basename + ".mounted"), 'w') as fd:
+        fd.write(auto_mounted_cmps)
+    with open(os.path.join(basepath, output_bom_basename + ".not_mounted"), 'w') as fd:
+        fd.write(nm_cmps)
+
     # Run Interactive Bom TODO: Improve call to the tool...
     # subprocess.run(["interactive_html_bom", args.kicad_pcb, '--highlight-pin1', '--no-browser', '--name-format', output_bom_basename, '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps + nm_cmps +"FID*"])
 

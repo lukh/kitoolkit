@@ -178,11 +178,11 @@ def tag_bom(bom_sheet, machine_conf):
                 row[feeder_index_index] = fid
 
         if row[assembly_mode_index] != 'Manual':
-            auto_mounted_cmps += row[DES] + ','
+            auto_mounted_cmps += ','.join(row[DES].split(' ')) + ','
 
         if row[DESIGNATION].find("/NM") != -1:
             row[assembly_mode_index] = 'NotMounted'
-            nm_cmp += row[DES] + ','
+            nm_cmp += ','.join(row[DES].split(' ')) + ','
 
 
     return bom_sheet, auto_mounted_cmps, nm_cmp
