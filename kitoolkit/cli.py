@@ -35,7 +35,9 @@ def run_production(args):
         fd.write(nm_cmps)
 
     # Run Interactive Bom TODO: Improve call to the tool...
-    # subprocess.run(["interactive_html_bom", args.kicad_pcb, '--highlight-pin1', '--no-browser', '--name-format', output_bom_basename, '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps + nm_cmps +"FID*"])
+    if args.kicad_pcb:
+        os.environ['INTERACTIVE_HTML_BOM_NO_DISPLAY'] = '1'
+        subprocess.run(["generate_interactive_bom.py", args.kicad_pcb, '--highlight-pin1', '--no-browser', '--name-format', output_bom_basename, '--dest-dir', os.path.abspath(basepath), '--blacklist', auto_mounted_cmps + nm_cmps +"FID*"])
 
 
 def main():
@@ -51,7 +53,7 @@ def main():
     k2c_set_args_parser(prod_parser)
 
     prod_parser.add_argument('bom', type=str, help='Kicad BOM File')
-    # prod_parser.add_argument('--kicad-pcb', type=str, help='Kicad PCB File to generate InteractiveBom')
+    prod_parser.add_argument('--kicad-pcb', type=str, help='Kicad PCB File to generate InteractiveBom')
     prod_parser.add_argument('--dir-exist-ok', action="store_true", help="Do not fail if the directory exists")
 
     # inventree 
